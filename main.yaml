@@ -1,9 +1,21 @@
 ---
 - hosts: all
   tasks:
+
   - name: 'Update user pi password'
     become: yes
     user:
       name: 'pi'
-      password: 'abcd'
+      password: $6$VqxDAcvzA/ZjOeDl$GVbVL2oEAwyHd7CWmqAi0ifrLgZvqWhtPq8J.H/lMIC48T6cAKcx/GnSgVjH2g33u4HDZiEudm37pD3c3MPu./
       update_password: always
+
+  - name: 'Modify IP addresses in /etc/dhcpcd.conf file'
+    become: yes
+    replace:
+      path: /etc/dhcpcd.conf
+      regexp: '#static ip_address=192.168.0.10/24'
+      replace: 'static ip_address=192.168.1.105/24'
+      regexp: '#static routers=192.168.0.1'
+      replace: 'static routers=192.168.1.1'
+      regexp: '#static domain_name_servers=192.168.0.1 8.8.8.8 fd51:42f8:caae:d92e::1'
+      replace: 'static domain_name_servers=192.168.1.1 8.8.8.8 fd51:42f8:caae:d92e::1'
