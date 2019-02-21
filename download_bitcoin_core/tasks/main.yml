@@ -1,0 +1,9 @@
+---
+- name: 'Download Bitcoin Core {{bitcoin_core_version}} binaries'
+  get_url:
+    url: 'https://bitcoincore.org/bin/bitcoin-core-{{bitcoin_core_version}}/bitcoin-{{bitcoin_core_version}}-arm-linux-gnueabihf.tar.gz'
+    dest: '{{download_destination}}'
+    checksum: '{{bitcoin_core_sha256}}'
+    mode: 0750
+  tags:
+    - always

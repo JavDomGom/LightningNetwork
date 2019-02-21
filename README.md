@@ -20,7 +20,7 @@ Repo to test Bitcoin Lightning Network
 
 3. Probar conexión SSH.
   ```bash
-  ssh pi@192.168.1.105
+  ssh -o StrictHostKeyChecking=no pi@192.168.1.105
   ```
 
 4. Cerrar la sesión SSH y volver a localhost. Instalar la librería `passlib` de Python.
