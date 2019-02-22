@@ -1,7 +1,6 @@
 ---
-- name: confluent kafka
+- name: 'Bitcoin Lightning Network node installation'
   hosts: LightningNetwork
-  become: yes
   remote_user: pi
   roles:
   - init_conf

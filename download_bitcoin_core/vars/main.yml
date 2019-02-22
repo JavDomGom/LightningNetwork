@@ -1,3 +1,6 @@
 download_destination: '/var/tmp'
 bitcoin_core_version: '0.17.1'
+bitcoin_core_file: 'bitcoin-{{bitcoin_core_version}}-arm-linux-gnueabihf.tar.gz'
 bitcoin_core_sha256: 'sha256: aab3c1fb92e47734fadded1d3f9ccf0ac5a59e3cdc28c43a52fcab9f0cb395bc'
+bitcoin_path: '/opt/bitcoin'
+bitcoin_config_path: '~/.bitcoin'

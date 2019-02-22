@@ -46,3 +46,14 @@ Repo to test Bitcoin Lightning Network
   static routers=192.168.1.1
   static domain_name_servers=192.168.1.1 8.8.8.8 fd51:42f8:caae:d92e::1
   ```
+
+7. Descargar el [cliente de Bitcoin Core](https://bitcoincore.org/bin/bitcoin-core-0.17.1/bitcoin-0.17.1-arm-linux-gnueabihf.tar.gz) y chequear el hash SHA256 para verificar su integridad.
+
+8. Crear los directorios `/opt/bitcoin` y `~/.bitcoin`.
+
+9. Descomprimir el cliente Bitcoin Core descargado previamente en el directorio `/opt/bitcoin`.
+
+10. Añadir la siguiente línea al final del archivo `/home/pi/.profile`.
+```bash
+export PATH=$PATH:/opt/bitcoin/bin
+```
