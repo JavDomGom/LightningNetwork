@@ -1,0 +1,77 @@
+---
+- name: 'Download Bitcoin Core {{bitcoin_core_version}} binaries'
+  get_url:
+    url: 'https://bitcoincore.org/bin/bitcoin-core-{{bitcoin_core_version}}/{{bitcoin_core_file}}'
+    dest: '{{download_destination}}'
+    checksum: '{{bitcoin_core_sha256}}'
+    mode: 0750
+  tags:
+    - always
+
+- name: 'Create {{bitcoin_core_path}} directory'
+  become: yes
+  file:
+    path: '{{bitcoin_core_path}}'
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0750
+
+- name: 'Create {{bitcoin_core_config_path}} directory'
+  file:
+    path: '{{bitcoin_core_config_path}}'
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0750
+
+- name: 'Unarchive {{bitcoin_core_file}} file'
+  unarchive:
+    src: '{{download_destination}}/{{bitcoin_core_file}}'
+    dest: '{{bitcoin_core_path}}'
+    extra_opts: [--strip-components=1]
+    owner: pi
+    group: pi
+    mode: 0750
+    remote_src: yes
+
+- name: 'Delete {{download_destination}}/{{bitcoin_core_file}} file'
+  file:
+    path: '{{download_destination}}/{{bitcoin_core_file}}'
+    state: absent
+
+- name: 'Add Bitcoin core binaries directory to PATH in pi .profile file'
+  lineinfile:
+    path: /home/pi/.profile
+    line: 'export PATH=$PATH:{{bitcoin_core_path}}/bin'
+    create: yes
+
+- name: 'Configuring Bitcoin Core'
+  template:
+    src: bitcoin.conf.j2
+    dest: '{{bitcoin_core_config_path}}/bitcoin.conf'
+
+- name: 'Rebooting the system for configuration changes to take effect'
+  become: yes
+  shell: 'reboot'
+  async: 1
+  poll: 0
+
+- name: 'Wait for the reboot to complete'
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
+
+- name: 'Unarchive {{bitcoin_core_data_file}} file. This can take a while (30-40 min), please be patient.'
+  unarchive:
+    src: '{{bitcoin_core_data_file}}'
+    dest: '{{bitcoin_core_config_path}}'
+    owner: pi
+    group: pi
+    mode: 0750
+    remote_src: no
+
+- name: 'Start Bitcoin Core client'
+  command: /opt/bitcoin/bin/bitcoind

@@ -1,0 +1,55 @@
+---
+- name: 'Download Lightning Network Daemon {{lnd_version}} binaries'
+  get_url:
+    url: 'https://github.com/lightningnetwork/lnd/releases/download/{{lnd_version}}/{{lnd_file}}'
+    dest: '{{download_destination}}'
+    checksum: '{{lnd_sha256}}'
+    mode: 0750
+  tags:
+    - always
+
+- name: 'Create {{lnd_path}} directory'
+  become: yes
+  file:
+    path: '{{lnd_path}}'
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0750
+
+- name: 'Create {{lnd_config_path}} directory'
+  file:
+    path: '{{lnd_config_path}}'
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0750
+
+- name: 'Unarchive {{lnd_file}} file'
+  unarchive:
+    src: '{{download_destination}}/{{lnd_file}}'
+    dest: '{{lnd_path}}'
+    extra_opts: [--strip-components=1]
+    owner: pi
+    group: pi
+    mode: 0750
+    remote_src: yes
+
+- name: 'Delete {{download_destination}}/{{lnd_file}} file'
+  file:
+    path: '{{download_destination}}/{{lnd_file}}'
+    state: absent
+
+- name: 'Add Lightning Network Daemon directory to PATH in pi .profile file'
+  lineinfile:
+    path: /home/pi/.profile
+    line: 'export PATH=$PATH:{{lnd_path}}'
+    create: yes
+
+- name: 'Configuring Lightning Network Daemon'
+  template:
+    src: lnd.conf.j2
+    dest: '{{lnd_config_path}}/lnd.conf'
+
+# - name: 'Start Lightning Network Daemon'
+#   command: /opt/lnd/lnd &

@@ -1,59 +1,54 @@
-# LightningNetwork
-Repo to test Bitcoin Lightning Network
-
-## Configure
-1. Listar los filesystems.
+# Ansible playbook to install a Bitcoin Lightning Network node
+1. Replace `REPLACE_RPCUSER`, `REPLACE_RPCPASSWORD` and `REPLACE_PRUNE` strings in bitcoin_core/vars/`main.yml` file for your choice, for example:
   ```bash
-  df -h
-  Filesystem      Size   Used  Avail Capacity   iused     ifree %iused  Mounted on
-  /dev/disk0s2   931Gi  389Gi  541Gi    42% 102036502 141944240   42%   /
-  devfs          184Ki  184Ki    0Bi   100%       638         0  100%   /dev
-  map -hosts       0Bi    0Bi    0Bi   100%         0         0  100%   /net
-  map auto_home    0Bi    0Bi    0Bi   100%         0         0  100%   /home
-  /dev/disk1s1    43Mi   22Mi   21Mi    51%         0         0  100%   /Volumes/boot
+  download_destination: '/var/tmp'
+  bitcoin_core_version: '0.17.1'
+  bitcoin_core_file: 'bitcoin-{{bitcoin_core_version}}-arm-linux-gnueabihf.tar.gz'
+  bitcoin_core_sha256: 'sha256: aab3c1fb92e47734fadded1d3f9ccf0ac5a59e3cdc28c43a52fcab9f0cb395bc'
+  bitcoin_core_path: '/opt/bitcoin'
+  bitcoin_core_config_path: '~/.bitcoin'
+  bitcoin_core_rpcuser: johndoe
+  bitcoin_core_rpcpassword: abcd1234
+  bitcoin_core_prune: 50000
+  bitcoin_core_data_file: 'bitcoin_datadir.tar.gz'
   ```
 
-2. Crear archivo `ssh` vacío en la tarjeta micro SD.
+2. Replace `REPLACE_EXTERNAL_IP`, `REPLACE_ALIAS`, `REPLACE_RPCUSER` and `REPLACE_RPCPASSWORD` strings in lightning_network_daemon/vars/`main.yml` file for your choice, for example:
   ```bash
-  > /Volumes/boot/ssh
+  download_destination: '/var/tmp'
+  lnd_version: 'v0.5.2-beta'
+  lnd_file: 'lnd-linux-armv7-{{lnd_version}}.tar.gz'
+  lnd_sha256: 'sha256: 9adf9f3d0b8a62942f68d75ffe043f9255319209f751dee4eac82375ec0a86cd'
+  lnd_path: '/opt/lnd'
+  lnd_config_path: '~/.bitcoin'
+  lnd_externalip: 86.53.156.171
+  lnd_alias: my_lightning_network_node
+  lnd_rpcuser: johndoe
+  lnd_rpcpassword: abcd1234
+  ```
+2. Write your own `inventory.ini` file wit all your hosts and IP addresses, for example:
+  ```bash
+  [all]
+  raspberryPi_000 ansible_host=192.168.1.101
+  raspberryPi_001 ansible_host=192.168.1.102
+  raspberryPi_002 ansible_host=192.168.1.103
+  ...
+
+  [LightningNetworkNodes]
+  raspberryPi_000
+  raspberryPi_001
+  raspberryPi_002
+  ...
   ```
 
-3. Probar conexión SSH.
+3. Download [complete blockchain data](https://bitcoineando.es/btc_datadir/bitcoin_datadir.tar) from any regular computer. Once downloaded compress the data in a file called `bitcoin_datadir.tar.gz`.
   ```bash
-  ssh -o StrictHostKeyChecking=no pi@192.168.1.105
+  tar zcvf bitcoin_datadir.tar.gz blocks chainstate
   ```
 
-4. Cerrar la sesión SSH y volver a localhost. Instalar la librería `passlib` de Python.
+4. Store it in bitcoin_core/`files` directory.
+
+5. Launch this Ansible playbook to automatically install and configure a Bitcoin Lighting Network node on one or more hosts.
   ```bash
-  pip install passlib
+  ansible-playbook -i inventory.ini -u pi --ask-pass main.yaml
   ```
-
-5. Hashear una nueva password para el usuario `pi` con el siguiente comando.
-  ```bash
-  python -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
-  ```
-  En el pormpt introducir la que será la nueva password para el usuario `pi`, por ejemplo `abcd1234`. El programa nos devolverá una cadena hasheada similar a la siguiente.
-  ```bash
-  $6$VqxDAcvzA/ZjOeDl$GVbVL2oEAwyHd7CWmqAi0ifrLgZvqWhtPq8J.H/lMIC48T6cAKcx/GnSgVjH2g33u4HDZiEudm37pD3c3MPu./
-  ```
-
-6. Modificar archivo `/etc/dhcpcd.conf`. Descomentar las líneas `static ip_address`, `static routers` y `static domain_name_servers`. Se han de añadir la dirección IP de la RaspberryPi y la del Router.
-  ```bash
-  # Example static IP configuration:
-  #interface eth0
-  static ip_address=192.168.1.105/24
-  #static ip6_address=fd51:42f8:caae:d92e::ff/64
-  static routers=192.168.1.1
-  static domain_name_servers=192.168.1.1 8.8.8.8 fd51:42f8:caae:d92e::1
-  ```
-
-7. Descargar el [cliente de Bitcoin Core](https://bitcoincore.org/bin/bitcoin-core-0.17.1/bitcoin-0.17.1-arm-linux-gnueabihf.tar.gz) y chequear el hash SHA256 para verificar su integridad.
-
-8. Crear los directorios `/opt/bitcoin` y `~/.bitcoin`.
-
-9. Descomprimir el cliente Bitcoin Core descargado previamente en el directorio `/opt/bitcoin`.
-
-10. Añadir la siguiente línea al final del archivo `/home/pi/.profile`.
-```bash
-export PATH=$PATH:/opt/bitcoin/bin
-```
