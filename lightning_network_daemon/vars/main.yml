@@ -4,7 +4,6 @@ lnd_file: 'lnd-linux-armv7-{{lnd_version}}.tar.gz'
 lnd_sha256: 'sha256: 9adf9f3d0b8a62942f68d75ffe043f9255319209f751dee4eac82375ec0a86cd'
 lnd_path: '/opt/lnd'
 lnd_config_path: '~/.lnd'
-lnd_externalip: REPLACE_EXTERNAL_IP
-lnd_alias: REPLACE_ALIAS
-lnd_rpcuser: REPLACE_RPCUSER
-lnd_rpcpassword: REPLACE_RPCPASSWORD
+lnd_externalip: 'REPLACE_EXTERNAL_IP'
+lnd_rpcuser: 'REPLACE_RPCUSER'
+lnd_rpcpassword: 'REPLACE_RPCPASSWORD'

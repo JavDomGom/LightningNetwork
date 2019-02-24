@@ -10,10 +10,9 @@
   bitcoin_core_rpcuser: johndoe
   bitcoin_core_rpcpassword: abcd1234
   bitcoin_core_prune: 50000
-  bitcoin_core_data_file: 'bitcoin_datadir.tar.gz'
   ```
 
-2. Replace `REPLACE_EXTERNAL_IP`, `REPLACE_ALIAS`, `REPLACE_RPCUSER` and `REPLACE_RPCPASSWORD` strings in lightning_network_daemon/vars/`main.yml` file for your choice, for example:
+2. Replace `REPLACE_EXTERNAL_IP`, `REPLACE_RPCUSER` and `REPLACE_RPCPASSWORD` strings in lightning_network_daemon/vars/`main.yml` file for your choice, for example:
   ```bash
   download_destination: '/var/tmp'
   lnd_version: 'v0.5.2-beta'
@@ -22,16 +21,15 @@
   lnd_path: '/opt/lnd'
   lnd_config_path: '~/.bitcoin'
   lnd_externalip: 86.53.156.171
-  lnd_alias: my_lightning_network_node
   lnd_rpcuser: johndoe
   lnd_rpcpassword: abcd1234
   ```
-2. Write your own `inventory.ini` file wit all your hosts and IP addresses, for example:
+3. Write your own `inventory.ini` file with all your hosts, IP addresses and other custom variables like alias, for example:
   ```bash
   [all]
-  raspberryPi_000 ansible_host=192.168.1.101
-  raspberryPi_001 ansible_host=192.168.1.102
-  raspberryPi_002 ansible_host=192.168.1.103
+  raspberryPi_000 ansible_host=192.168.1.100 alias=lnd_000
+  raspberryPi_001 ansible_host=192.168.1.101 alias=lnd_001
+  raspberryPi_002 ansible_host=192.168.1.102 alias=lnd_002
   ...
 
   [LightningNetworkNodes]
@@ -41,14 +39,7 @@
   ...
   ```
 
-3. Download [complete blockchain data](https://bitcoineando.es/btc_datadir/bitcoin_datadir.tar) from any regular computer. Once downloaded compress the data in a file called `bitcoin_datadir.tar.gz`.
-  ```bash
-  tar zcvf bitcoin_datadir.tar.gz blocks chainstate
-  ```
-
-4. Store it in bitcoin_core/`files` directory.
-
-5. Launch this Ansible playbook to automatically install and configure a Bitcoin Lighting Network node on one or more hosts.
+4. Launch this Ansible playbook to automatically install and configure a Bitcoin Lighting Network node on one or more hosts.
   ```bash
   ansible-playbook -i inventory.ini -u pi --ask-pass main.yaml
   ```

@@ -1,24 +1,28 @@
 ---
-- name: 'Update user pi password'
-  become: yes
-  user:
-    name: 'pi'
-    password: $6$VqxDAcvzA/ZjOeDl$GVbVL2oEAwyHd7CWmqAi0ifrLgZvqWhtPq8J.H/lMIC48T6cAKcx/GnSgVjH2g33u4HDZiEudm37pD3c3MPu./
-    update_password: always
+# - name: 'Update user pi password'
+#   become: yes
+#   user:
+#     name: 'pi'
+#     # To generate hashed password: python -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
+#     password: $6$VqxDAcvzA/ZjOeDl$GVbVL2oEAwyHd7CWmqAi0ifrLgZvqWhtPq8J.H/lMIC48T6cAKcx/GnSgVjH2g33u4HDZiEudm37pD3c3MPu./
+#     update_password: always
 
 - name: 'Modify static ip_address in {{dhcpcd_file}} file'
+  become: yes
   replace:
     path: '{{dhcpcd_file}}'
     regexp: '#static ip_address=192.168.0.10/24'
     replace: 'static ip_address={{ansible_host}}/24'
 
 - name: 'Modify static routers in {{dhcpcd_file}} file'
+  become: yes
   replace:
     path: '{{dhcpcd_file}}'
     regexp: '#static routers=192.168.0.1'
     replace: 'static routers={{router_ip}}'
 
 - name: 'Modify static domain_name_servers in {{dhcpcd_file}} file'
+  become: yes
   replace:
     path: '{{dhcpcd_file}}'
     regexp: '#static domain_name_servers=192.168.0.1 8.8.8.8 fd51:42f8:caae:d92e::1'

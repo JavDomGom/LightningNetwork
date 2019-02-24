@@ -64,14 +64,27 @@
     delay: 5
     timeout: 300
 
-- name: 'Unarchive {{bitcoin_core_data_file}} file. This can take a while (30-40 min), please be patient.'
+- name: 'Download Bitcoin Core synchronized chain {{bitcoin_core_data_file}}.This can take a while (30-40 min), please be patient'
+  get_url:
+    url: 'https://bitcoineando.es/btc_datadir/{{bitcoin_core_data_file}}'
+    dest: '{{download_destination}}'
+    mode: 0750
+  tags:
+    - always
+
+- name: 'Unarchive {{bitcoin_core_data_file}} file. This can take a while (30-40 min), please be patient'
   unarchive:
-    src: '{{bitcoin_core_data_file}}'
+    src: '{{download_destination}}/{{bitcoin_core_data_file}}'
     dest: '{{bitcoin_core_config_path}}'
     owner: pi
     group: pi
     mode: 0750
-    remote_src: no
+    remote_src: yes
+
+- name: 'Delete {{download_destination}}/{{bitcoin_core_data_file}} file'
+  file:
+    path: '{{download_destination}}/{{bitcoin_core_data_file}}'
+    state: absent
 
 - name: 'Start Bitcoin Core client'
   command: /opt/bitcoin/bin/bitcoind

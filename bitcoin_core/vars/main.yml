@@ -4,7 +4,6 @@ bitcoin_core_file: 'bitcoin-{{bitcoin_core_version}}-arm-linux-gnueabihf.tar.gz'
 bitcoin_core_sha256: 'sha256: aab3c1fb92e47734fadded1d3f9ccf0ac5a59e3cdc28c43a52fcab9f0cb395bc'
 bitcoin_core_path: '/opt/bitcoin'
 bitcoin_core_config_path: '~/.bitcoin'
-bitcoin_core_rpcuser: REPLACE_RPCUSER
-bitcoin_core_rpcpassword: REPLACE_RPCPASSWORD
-bitcoin_core_prune: REPLACE_PRUNE
-bitcoin_core_data_file: 'bitcoin_datadir.tar.gz'
+bitcoin_core_rpcuser: 'REPLACE_RPCUSER'
+bitcoin_core_rpcpassword: 'REPLACE_RPCPASSWORD'
+bitcoin_core_prune: 'REPLACE_PRUNE'
