@@ -10,7 +10,7 @@ With this playbook you can install the Bitcoin Core client and a Node Lightning 
 - SSH protocol to manage machines.
 - Internet connection to download software.
 
-![alt text](img/ansible_prerequisites.png)
+![alt text](img/ansible_playbook_bitcoin_lightning_network.png)
 
 ## Configure before launch playbook
 1. Replace `REPLACE_RPCUSER`, `REPLACE_RPCPASSWORD` and `REPLACE_PRUNE` strings in bitcoin_core/vars/`main.yml` file for your choice, for example:
