@@ -3,11 +3,17 @@
 ## Getting Started
 With this playbook you can install the Bitcoin Core client and a Node Lightning Network in "N" computers from a single point of execution.
 
-## Prerequsites
-- [Ansible 2.7](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-- [Python 2.7](https://www.python.org/downloads/release/python-2715/) or [Python 3.5](https://www.python.org/downloads/release/python-350/) and higher.
-- GNU/Linux, Unix or Mac operative system. Windows isn’t supported.
+## Requirements
+
+### Control Machine
+- GNU/Linux, Unix or OS X operative system. Windows isn’t supported.
+- [Ansible 2.7](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-pip)
+- Python 2 (versions [2.6](https://www.python.org/download/releases/2.6/) or [2.7](https://www.python.org/downloads/release/python-2715/)) or Python 3 (versions [3.5](https://www.python.org/downloads/release/python-350/) and higher).
 - SSH protocol to manage machines.
+
+### Managed Node
+- GNU/Linux, Unix or OS X operative system. Windows isn’t supported.
+- Python [2.6](https://www.python.org/download/releases/2.6/) or higher.
 - Internet connection to download software.
 
 ![alt text](img/ansible_playbook_bitcoin_lightning_network.png)
