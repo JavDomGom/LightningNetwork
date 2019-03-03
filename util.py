@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import os
+import fileinput
 
 outDir          = 'out'
 inventoryFile   = 'inventory.ini'
-
 
 def printMenuHeader(title):
     """Prints menu headers with format.
@@ -61,41 +61,60 @@ def replaceData(file, oldString, newString):
         print('ERROR: Saving data failed!')
 
 
-def configureAnsibleInventory():
+def configureNodes():
     """Configure Ansible inventory.ini file."""
 
     # Set local variables.
-    nodeList    = []
-    n_nodes     = int(input('\nNumber of nodes: '))
+    nodesList       = []
+    defaultPrune    = '50000'
+    prune           = input('\nPrune (Default: {}): '.format(defaultPrune)) or defaultPrune
+    n_nodes         = int(input('\nNumber of nodes: '))
+    nodesName       = input('\nName for nodes: ')
+    externalIP      = os.popen('curl -s ifconfig.me').readline()
+    lndVarsFile     = 'lightning_network_daemon/vars/main.yml'
+    bcVarsFile      = 'bitcoin_core/vars/main.yml'
 
     # Ask to user data about nodes.
-    for node in range(n_nodes):
-        nodeName    = input('Node {} name: '.format(node))
-        nodeIp      = input('Node {} IP: '.format(node))
-        nodeAlias   = input('Node {} alias: '.format(node))
-        nodeDict    = {
-            'name': nodeName,
-            'ip': nodeIp,
-            'alias': nodeAlias
+    for n in range(n_nodes):
+        number          = str(n).zfill(3)
+        name            = nodesName+'_'+number
+        defaultAlias    = 'lnd_'+number
+        ip              = input('Node {} IP: '.format(name))
+        alias           = input('Node {} alias (Default: {}): '
+                          .format(name, defaultAlias)) or defaultAlias
+        rpcuser         = input('Node {} user: '.format(name))
+        rpcpassword     = input('Node {} password: '.format(name))
+        nodeDict        = {
+            'name': name,
+            'ip': ip,
+            'alias': alias,
+            'rpcuser': rpcuser,
+            'rpcpassword': rpcpassword
         }
-        nodeList.append(nodeDict)
+        nodesList.append(nodeDict)
 
     # Write data inventory.ini file.
     try:
         with open(inventoryFile, 'w') as f:
             f.write('[all]\n')
-            for host in nodeList:
-                f.write('{} ansible_host={} alias={}\n'.format(
-                    host['name'],
-                    host['ip'],
-                    host['alias'])
+            for host in nodesList:
+                f.write('{} ansible_host={} alias={} rpcuser={} rpcpassword={}\n'
+                    .format(
+                        host['name'],
+                        host['ip'],
+                        host['alias'],
+                        host['rpcuser'],
+                        host['rpcpassword']
+                    )
                 )
             f.write('\n[LightningNetworkNodes]\n')
-            for host in nodeList:
+            for host in nodesList:
                 f.write('{}\n'.format(host['name']))
     except IOError:
         print('Saving failed!')
 
+    replaceData(bcVarsFile, 'REPLACE_PRUNE', prune)
+    replaceData(lndVarsFile, 'REPLACE_EXTERNAL_IP', externalIP)
 
 def install():
     pass

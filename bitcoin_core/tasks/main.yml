@@ -64,7 +64,7 @@
     delay: 5
     timeout: 300
 
-- name: 'Download Bitcoin Core synchronized chain {{bitcoin_core_data_file}}. This can take a while (30-40 min), please be patient'
+- name: 'Download Bitcoin Core synchronized chain {{bitcoin_core_data_file}}. This can take a while (20-30 min), please be patient'
   get_url:
     url: 'https://bitcoineando.es/btc_datadir/{{bitcoin_core_data_file}}'
     dest: '{{download_destination}}'
@@ -72,7 +72,7 @@
   tags:
     - always
 
-- name: 'Unarchive {{bitcoin_core_data_file}} file. This can take a while (30-40 min), please be patient'
+- name: 'Unarchive {{bitcoin_core_data_file}} file. This can take a while (20-30 min), please be patient'
   unarchive:
     src: '{{download_destination}}/{{bitcoin_core_data_file}}'
     dest: '{{bitcoin_core_config_path}}'
