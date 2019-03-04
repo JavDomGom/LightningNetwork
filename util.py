@@ -5,6 +5,7 @@ import fileinput
 
 outDir          = 'out'
 inventoryFile   = 'inventory.ini'
+nodesConfigured = False
 
 def printMenuHeader(title):
     """Prints menu headers with format.
@@ -63,13 +64,13 @@ def replaceData(file, oldString, newString):
 
 def configureNodes():
     """Configure Ansible inventory.ini file."""
-
+    
     # Set local variables.
     nodesList       = []
     defaultPrune    = '50000'
     prune           = input('\nPrune (Default: {}): '.format(defaultPrune)) or defaultPrune
-    n_nodes         = int(input('\nNumber of nodes: '))
-    nodesName       = input('\nName for nodes: ')
+    n_nodes         = int(input('Number of nodes: '))
+    nodesName       = input('Name for nodes: ')
     externalIP      = os.popen('curl -s ifconfig.me').readline()
     lndVarsFile     = 'lightning_network_daemon/vars/main.yml'
     bcVarsFile      = 'bitcoin_core/vars/main.yml'
@@ -115,6 +116,8 @@ def configureNodes():
 
     replaceData(bcVarsFile, 'REPLACE_PRUNE', prune)
     replaceData(lndVarsFile, 'REPLACE_EXTERNAL_IP', externalIP)
+
+    nodesConfigured = True
 
 def install():
     pass
