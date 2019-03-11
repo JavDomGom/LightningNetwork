@@ -1,7 +1,7 @@
 ---
 - name: 'Bitcoin core and Lightning Network node installation'
   hosts: LightningNetworkNodes
-  remote_user: pi
+  remote_user: REPLACE_GLOBAL_USER
   roles:
   - init_conf
   - bitcoin_core
